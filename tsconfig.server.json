@@ -1,9 +1,10 @@
 {
     "compilerOptions": {
       "outDir": "./dist/",
+      "esModuleInterop": false,
       "noImplicitAny": true,
       "module": "commonjs",
-      "target": "es5",
+      "target": "es6",
       "allowSyntheticDefaultImports": true,
       "lib": [
           "es2017"

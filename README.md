@@ -8,6 +8,10 @@ npm run dev
 
 Server will start on port 3000. Ensure that any environment variables `process.env.X` where X is your variable are added to the .env file you created.
 
+# TODOs
+
+View the [todos.md](misc/todos.md).
+
 #### Variables you will need in `.env`:
 
 * SECRET

@@ -6,6 +6,7 @@ import * as bodyParser from "body-parser";
 import * as passport from "passport";
 import * as session from "express-session";
 import * as http from "http";
+import * as socketio from "socket.io";
 import initializePassport from "./auth/passportConfig";
 import UserRouter from "./routers/rest/UserRouter";
 import LoginRouter from "./routers/LoginRouter";
@@ -15,6 +16,8 @@ dotenv.config();
 // SERVER INIT
 const app = express();
 const server = http.createServer(app);
+const io = require("socket.io")(server);
+const connections: {[socketId: string]: string} = {};
 
 // MONGOOSE
 
@@ -25,8 +28,8 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log(CYAN, `[INFO] MongoDB Connection Established.`))
-  .catch((err: Error) => console.log(RED, `[ERROR] Mongo error: ${err.message}`));
+  .then(() => console.log(CYAN, `[INFO] MongoDB Connection Established.\n`))
+  .catch((err: Error) => console.log(RED, `[ERROR] Mongo error: ${err.message}\n`));
 
 
 // EXPRESS SESSION
@@ -56,6 +59,9 @@ app.use(`/`, LoginRouter);
 app.use(`/api`, UserRouter);
 
 const defaultRouter = express.Router();
+defaultRouter.get("/connections", (req, res) => {
+  res.send(connections);
+})
 defaultRouter.get("*", (req, res) => {
   res.sendFile(path.join(__dirname + "/../public/index.html"));
 });
@@ -67,4 +73,22 @@ const port: string | number = process.env.PORT || 3000;
 server.listen(port, () =>{
   console.log(CYAN, `[INFO] Server listening on port ${port} in mode ${app.settings.env}.`);
   console.log(YELLOW, `\n******\n[INFO] Visit ( http://localhost:3000 ) to open the app.\n******\n`);
+});
+
+// SOCKET IO
+
+io.on("connection", (socket: socketio.Socket) => {
+
+  socket.on("new-user", (payload: {user: string, room: string}) => {
+    console.log(`[SOCKET.IO] User ${payload.user} has connected to room ${payload.room}.`);
+    connections[socket.id] = payload.user;
+    socket.join(payload.room);
+  });
+
+  socket.on("disconnect", () => {
+    if (connections[socket.id] !== undefined){
+      console.log("[SOCKET.IO] A user disconnected.");
+    }
+    delete connections[socket.id];
+  });
 });

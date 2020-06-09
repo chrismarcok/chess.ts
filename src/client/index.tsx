@@ -5,7 +5,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { NoMatch } from "./pages/NoMatch";
 import { App } from "./pages/App";
 import "./scss/app";
-
+import { Room } from "./pages/Room";
 import store from "./store";
 
 render(
@@ -13,6 +13,7 @@ render(
     <BrowserRouter>
       <Switch>
         <Route exact path="/" component={App} />
+        <Route exact path="/rooms/:roomId" component={Room} />
         <Route component={NoMatch} />
       </Switch>
     </BrowserRouter>
