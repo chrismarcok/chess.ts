@@ -1,15 +1,16 @@
 import { Schema, Document, model } from "mongoose";
 
 const UserSchema: Schema = new Schema({
-  username: { type: String, required: true },
+  username: { type: String, required: true, minlength: 1, unique: true },
   password: { type: String, required: true },
-  email: { type: String, required: true },
+  email: { type: String, required: true, minlength: 1, unique: true },
   avatarURL: { type: String, required: true },
   mmr: { type: Number, required: true },
   bio: { type: String, required: true },
   dateCreated: { type: Date, default: Date.now },
   deleted: { type: Boolean, default: false },
-  isAdmin: { type: Boolean, default: false }
+  admin: { type: Boolean, default: false },
+  activated: { type: Boolean, required: true }
 });
 
 export interface IUser extends Document {
@@ -17,14 +18,13 @@ export interface IUser extends Document {
   username: string;
   password: string;
   email: string;
-  firstname: string;
-  lastName: string;
   avatarURL: string;
   mmr: number;
   bio: string;
   dateCreated: Date;
   deleted: boolean;
   admin: boolean;
+  activated: boolean;
 }
 
 export default model<IUser>('users', UserSchema);

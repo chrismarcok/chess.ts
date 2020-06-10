@@ -7,9 +7,12 @@ import { App } from "./pages/App";
 import "./scss/app";
 import { Room } from "./pages/Room";
 import store from "./store";
+import "!style-loader!css-loader!react-toastify/dist/ReactToastify.css";
+import {ToastContainer} from "react-toastify";
 
 render(
   <Provider store={store}>
+    <ToastContainer position="top-right"/>
     <BrowserRouter>
       <Switch>
         <Route exact path="/" component={App} />

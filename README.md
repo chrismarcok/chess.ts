@@ -3,6 +3,7 @@
 ```bash
 npm install
 touch .env
+./axiosTypes.sh
 npm run dev
 ```
 

@@ -6,3 +6,4 @@
     * At least need messaging system
 * Create registration form
 * Email verification with nodemailer
+  * set up /verify route.
