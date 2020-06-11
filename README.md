@@ -1,3 +1,7 @@
+# Game Info & Rules
+
+View [game.md](game.md).
+
 # Getting Started
 
 ```bash
@@ -12,7 +16,7 @@ Server will start on port 3000. Ensure that any environment variables `process.e
 
 # TODOs
 
-View the [todos.md](misc/todos.md).
+View [GitHub Projects](https://github.com/chrismarcok/boardgame/projects).
 
 # `.env`:
 
