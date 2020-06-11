@@ -1,6 +1,7 @@
 # Getting Started
 
 ```bash
+cd boardgame
 npm install
 touch .env
 ./axiosTypes.sh
@@ -13,10 +14,14 @@ Server will start on port 3000. Ensure that any environment variables `process.e
 
 View the [todos.md](misc/todos.md).
 
-#### Variables you will need in `.env`:
+# `.env`:
 
-* SECRET
-* MONGO_URI
+```bash
+SECRET=???
+MONGO_URI=???
+BASE_URL=http://localhost:3000
+EMAIL_PASSWORD=???
+```
 
 # Server
 The server build process compiles the TypeScript files found in `/src/server` into a single bundled JavaScript file located in the `/dist` directory.

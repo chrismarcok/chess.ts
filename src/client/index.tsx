@@ -3,19 +3,19 @@ import { Provider } from "react-redux";
 import { render } from "react-dom";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { NoMatch } from "./pages/NoMatch";
-import { App } from "./pages/App";
+import { HomePage } from "./pages/HomePage";
 import "./scss/app";
 import { Room } from "./pages/Room";
 import store from "./store";
 import "!style-loader!css-loader!react-toastify/dist/ReactToastify.css";
-import {ToastContainer} from "react-toastify";
+import { ToastContainer } from "react-toastify";
 
 render(
   <Provider store={store}>
-    <ToastContainer position="top-right"/>
+    <ToastContainer position="top-right" />
     <BrowserRouter>
       <Switch>
-        <Route exact path="/" component={App} />
+        <Route exact path="/" component={HomePage} />
         <Route exact path="/rooms/:roomId" component={Room} />
         <Route component={NoMatch} />
       </Switch>

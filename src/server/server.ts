@@ -7,6 +7,7 @@ import * as passport from "passport";
 import * as session from "express-session";
 import * as http from "http";
 import * as socketio from "socket.io";
+
 import initializePassport from "./auth/passportConfig";
 import UserRouter from "./routers/rest/UserRouter";
 import LoginRouter from "./routers/LoginRouter";
@@ -22,6 +23,7 @@ const connections: {[socketId: string]: string} = {};
 // MONGOOSE
 
 (<any>mongoose).Promise = global.Promise;
+mongoose.set("useCreateIndex", true);
 mongoose
   .connect(process.env.MONGO_URI,
   {

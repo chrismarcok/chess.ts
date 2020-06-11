@@ -36,6 +36,7 @@ export function createNewUser(username: string, password: string, email: string)
  * @param callback Called when the mailer succeeds.
  */
 export function sendVerificationEmail(user: IUser, callback: (success: boolean) => void): void {
+  
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -43,12 +44,14 @@ export function sendVerificationEmail(user: IUser, callback: (success: boolean) 
       pass: process.env.EMAIL_PASSWORD,
     },
   });
+
   const mailOptions = {
     from: '"Marcok Board Game" <csc301hms@gmail.com>',
     to: `${user.email}`,
     subject: "Marcok Board Game Verification Email",
-    text: `Hello ${user.username},\n\nPleases click the following link to complete account verification: \n\nhttp://localhost:3000/api/verify/${user.id}\n\n Marcok Board Game`,
+    text: `Hello ${user.username},\n\nPleases click the following link to complete account verification: \n\n${process.env.BASE_URL}/api/verify/${user.id}\n\n Marcok Board Game`,
   };
+
   transporter.sendMail(mailOptions, (err: Error, data: any) => {
     if (err) {
       console.log(RED, `[NODEMAILER] Error ${err.message}`);

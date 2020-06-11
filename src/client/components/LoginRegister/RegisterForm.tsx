@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import Axios from "axios";
 import { toast } from "react-toastify";
 
 interface RegisterFormProps {}
@@ -19,7 +19,8 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({}) => {
     setEmailValue("");
   }
 
-  const registerUser = () => {
+  const registerUser = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
     if (passwordValue.length <= 5) {
       setErrText("Passwords must be longer than 5 characters.");
       return;
@@ -36,7 +37,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({}) => {
       email: emailValue,
     };
 
-    axios
+    Axios
       .post("/api/users", user)
       .then((response) => {
         console.log(response);
@@ -93,7 +94,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({}) => {
           onChange={(e) => setRepasswordValue(e.target.value)}
         ></input>
         {errText && (<p style={{fontSize: "0.8rem", color: "red"}}>{errText}</p>)}
-        <button className="login-btn" onClick={registerUser}>
+        <button className="login-btn" onClick={(e) => registerUser(e)}>
           Login
         </button>
       </div>

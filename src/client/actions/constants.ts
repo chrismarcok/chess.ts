@@ -1,1 +1,2 @@
-export const EXAMPLE_TYPE = "EXAMPLE_TYPE";
+export const USER_LOGIN = "USER_LOGIN";
+export const USER_LOGOUT = "USER_LOGOUT";

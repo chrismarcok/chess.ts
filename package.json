@@ -6,10 +6,10 @@
   "scripts": {
     "watch:build": "npx webpack -w",
     "watch:server": "nodemon dist/server.js",
+    "watch:axios": "cp node_modules/axios/index.d.ts node_modules/@types/axios",
     "dev": "npm-run-all --parallel watch:*",
     "start": "node dist/server.js",
-    "build": "cp node_modules/axios/index.d.ts node_modules/@types/axios && npx webpack",
-    "axios:win": "cp node_modules\\axios\\index.d.ts node_modules\\@types\\axios"
+    "build": "cp node_modules/axios/index.d.ts node_modules/@types/axios && npx webpack"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +25,7 @@
     "@types/passport-local": "^1.0.33",
     "@types/react": "^16.9.19",
     "@types/react-dom": "^16.9.5",
+    "@types/react-redux": "^7.1.9",
     "@types/socket.io": "^2.1.8",
     "@types/socket.io-client": "^1.4.33",
     "axios": "^0.19.2",
@@ -34,6 +35,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
+    "glamor": "^2.20.40",
     "mongoose": "^5.9.18",
     "node-sass": "^4.13.1",
     "nodemailer": "^6.4.8",

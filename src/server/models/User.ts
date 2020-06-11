@@ -27,4 +27,17 @@ export interface IUser extends Document {
   activated: boolean;
 }
 
+export interface ReactUser {
+  _id: string;
+  username: string;
+  email: string;
+  avatarURL: string;
+  mmr: number;
+  bio: string;
+  dateCreated: Date;
+  deleted: boolean;
+  admin: boolean;
+  activated: boolean;
+}
+
 export default model<IUser>('users', UserSchema);
