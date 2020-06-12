@@ -2,14 +2,14 @@ import * as express from "express";
 import * as bcrypt from "bcryptjs";
 import User, { IUser } from "../../models/User";
 import { getRandomString, sendVerificationEmail, createNewUser } from "../../../utils/utils";
-import { checkAuthenticated } from "../../auth/checkAuth";
+import { checkAuthenticated, checkAuthenticated403 } from "../../auth/checkAuth";
 
 const router = express.Router();
 
 /**
  * Get the user you are logged in as.
  */
-router.get(`/me`, checkAuthenticated, (req, res) => {
+router.get(`/me`, checkAuthenticated403, (req, res) => {
   const user: IUser = <IUser>req.user;
   user.password = undefined;
   res.send(user);

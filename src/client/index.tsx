@@ -9,17 +9,20 @@ import { Room } from "./pages/Room";
 import store from "./store";
 import "!style-loader!css-loader!react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import { VerifyLoginWrapper } from "./components/utils/VerifyLoginWrapper";
 
 render(
   <Provider store={store}>
-    <ToastContainer position="top-right" />
-    <BrowserRouter>
-      <Switch>
-        <Route exact path="/" component={HomePage} />
-        <Route exact path="/rooms/:roomId" component={Room} />
-        <Route component={NoMatch} />
-      </Switch>
-    </BrowserRouter>
+    <VerifyLoginWrapper>
+      <ToastContainer position="top-right" />
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/" component={HomePage} />
+          <Route exact path="/rooms/:roomId" component={Room} />
+          <Route component={NoMatch} />
+        </Switch>
+      </BrowserRouter>
+    </VerifyLoginWrapper>
   </Provider>,
   document.getElementById("root")
 );

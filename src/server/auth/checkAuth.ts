@@ -22,10 +22,10 @@ export function checkAuthenticated403(req: Req, res: Res, next:  Next){
 }
 
 export function checkAdmin(req: Req, res: Res, next:  Next){
-  if ((<IUser>req.user).admin){
+  if (req.user && (<IUser>req.user).admin){
     return next();
   } else {
-    res.redirect("/");
+    res.sendStatus(403);
   }
 }
 
@@ -33,6 +33,6 @@ export function checkGuest(req: Req, res: Res, next:  Next){
   if (!req.isAuthenticated()){
     return next();
   } else {
-    res.redirect('/groups');
+    res.redirect('/');
   }
 }

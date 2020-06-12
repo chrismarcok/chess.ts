@@ -10,9 +10,9 @@ export const nullUser: ReactUser = {
   mmr: null,
   bio: null,
   dateCreated: null,
-  deleted: false,
-  admin: false,
-  activated: false,
+  deleted: null,
+  admin: null,
+  activated: null,
 };
 
 export default (state = nullUser, action: IAction): ReactUser => {

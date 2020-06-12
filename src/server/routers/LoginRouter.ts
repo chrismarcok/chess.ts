@@ -7,6 +7,7 @@ const router = express.Router();
 
 /**
  * Logs in a user.
+ * @Body {username: string, password: string}
  */
 router.post('/login', function(req, res, next) {
 
@@ -22,14 +23,16 @@ router.post('/login', function(req, res, next) {
       if (err) { 
         return next(err); 
       }
-      res.status(200).send({
-        user: user
-      });
+      user.password = undefined;
+      res.status(200).send(user);
       return;
     });
   })(req, res, next);
 });
 
+/**
+ * Logs out the current user.
+ */
 router.get('/logout', checkAuthenticated, (req, res) => {
   const user: IUser = <IUser>req.user;
   console.log(`${user.username} has been logged out.`);
