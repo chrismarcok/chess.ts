@@ -1,10 +1,19 @@
 import React, { useState } from "react";
-import Axios from "axios";
+import Axios, { AxiosError } from "axios";
 import { toast } from "react-toastify";
 
-interface RegisterFormProps {}
+interface RegisterFormProps {
+  setShowingLoginForm: React.Dispatch<React.SetStateAction<boolean>>;
+  setLoginUsernameValue: React.Dispatch<React.SetStateAction<string>>;
+  setLoginPasswordValue: React.Dispatch<React.SetStateAction<string>>;
+}
 
-export const RegisterForm: React.FC<RegisterFormProps> = ({}) => {
+export const RegisterForm: React.FC<RegisterFormProps> = ({
+  setShowingLoginForm,
+  setLoginUsernameValue,
+  setLoginPasswordValue,
+}) => {
+  const [isLoading, setLoading] = useState(false);
   const [usernameValue, setUsernameValue] = useState("");
   const [emailValue, setEmailValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
@@ -17,10 +26,15 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({}) => {
     setPasswordValue("");
     setRepasswordValue("");
     setEmailValue("");
-  }
+  };
 
-  const registerUser = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const registerUser = (
+    e:
+      | React.MouseEvent<HTMLButtonElement, MouseEvent>
+      | React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
+    setLoading(true);
     if (passwordValue.length <= 5) {
       setErrText("Passwords must be longer than 5 characters.");
       return;
@@ -37,23 +51,31 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({}) => {
       email: emailValue,
     };
 
-    Axios
-      .post("/api/users", user)
+    Axios.post("/api/users", user)
       .then((response) => {
         console.log(response);
-        toast.success(`Successfully created user ${usernameValue}. Check your email to complete registration.`);
+        toast.success(
+          `Successfully created user ${usernameValue}. Check your email to complete registration.`
+        );
         resetFields();
+        setLoginUsernameValue(usernameValue);
+        setLoginPasswordValue(passwordValue);
+        setShowingLoginForm(true);
       })
-      .catch((err: Error) => {
+      .catch((err: AxiosError) => {
+        console.log(err.response);
         console.log(`Axios ERROR: ${err}`);
-        toast.error("There was an error creating your account.");
+        toast.error(err.response.data.message);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
   return (
     <>
       <h1>Register</h1>
-      <div className="register-form">
+      <form className="register-form" onSubmit={(e) => registerUser(e)}>
         <label>Username</label>
         <input
           id="register-username"
@@ -93,11 +115,14 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({}) => {
           value={repasswordValue}
           onChange={(e) => setRepasswordValue(e.target.value)}
         ></input>
-        {errText && (<p style={{fontSize: "0.8rem", color: "red"}}>{errText}</p>)}
+        {errText && (
+          <p style={{ fontSize: "0.8rem", color: "red" }}>{errText}</p>
+        )}
         <button className="login-btn" onClick={(e) => registerUser(e)}>
-          Login
+          Register
         </button>
-      </div>
+      </form>
+      {isLoading && <div>Loading...</div>}
     </>
   );
 };

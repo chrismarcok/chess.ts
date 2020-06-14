@@ -26,7 +26,7 @@ export default {
   },
   error: (message: string) => {
     toast.error(message, {
-      autoClose: 2000,
+      autoClose: 5000,
       closeButton: false,
       className: String(css({
         background: "#FFBEBC !important",

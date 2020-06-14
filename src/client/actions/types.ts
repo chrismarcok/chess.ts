@@ -1,4 +1,4 @@
-import { USER_LOGIN, USER_LOGOUT, LOCAL_STORAGE_USER } from "./constants";
+import { USER_LOGIN, USER_LOGOUT, LOCAL_STORAGE_USER, USER_ACTIVATE } from "./constants";
 import { ReactUser } from "../../server/models/User";
 
 export interface ReduxState {
@@ -25,6 +25,11 @@ export const userLogin = (user:ReactUser): IUserAction => {
 export const userLogout = (): IAction => {
   return {
     type: USER_LOGOUT,
-    payload: null,
+  }
+}
+
+export const userActivate = (): IAction => {
+  return {
+    type: USER_ACTIVATE,
   }
 }

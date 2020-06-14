@@ -1,9 +1,24 @@
 import * as express from "express";
 import * as passport from "passport";
-import { checkAuthenticated } from "../auth/checkAuth";
+import * as path from "path";
+import { checkAuthenticated, checkGuest } from "../auth/checkAuth";
 import { IUser, ReactUser } from "../models/User";
 
 const router = express.Router();
+
+/**
+ * Serves the login page.
+ */
+router.get("/login", checkGuest, (req, res) => {
+  res.sendFile(path.resolve(__dirname + "/../", 'public', 'index.html'));
+});
+
+/**
+ * Serves the login page.
+ */
+router.get("/login", checkGuest, (req, res) => {
+  res.sendFile(path.resolve(__dirname + "/../", 'public', 'index.html'));
+});
 
 /**
  * Logs in a user.

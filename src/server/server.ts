@@ -10,8 +10,11 @@ import * as socketio from "socket.io";
 
 import initializePassport from "./auth/passportConfig";
 import UserRouter from "./routers/rest/UserRouter";
+import DeckRouter from "./routers/rest/DeckRouter";
+import RoomRouter from "./routers/rest/RoomRouter";
 import LoginRouter from "./routers/LoginRouter";
 import { CYAN, RED, YELLOW } from "../utils/colors";
+import { checkAuthenticated } from "./auth/checkAuth";
 dotenv.config();
 
 // SERVER INIT
@@ -59,11 +62,16 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "../public")));
 app.use(`/`, LoginRouter);
 app.use(`/api`, UserRouter);
+app.use(`/api`, RoomRouter);
+app.use(`/api`, DeckRouter);
 
 const defaultRouter = express.Router();
 defaultRouter.get("/connections", (req, res) => {
   res.send(connections);
-})
+});
+defaultRouter.get("/activate/*", checkAuthenticated, (req, res) => {
+  res.sendFile(path.resolve(__dirname + "/../", 'public', 'index.html'));
+});
 defaultRouter.get("*", (req, res) => {
   res.sendFile(path.join(__dirname + "/../public/index.html"));
 });

@@ -1,5 +1,5 @@
 import { IAction } from "../actions/types";
-import { USER_LOGIN, USER_LOGOUT } from "../actions/constants";
+import { USER_LOGIN, USER_LOGOUT, USER_ACTIVATE } from "../actions/constants";
 import { ReactUser } from "../../server/models/User";
 
 export const nullUser: ReactUser = {
@@ -21,9 +21,13 @@ export default (state = nullUser, action: IAction): ReactUser => {
       return action.payload;
     }
     case USER_LOGOUT: {
+      return nullUser
+    }
+    case USER_ACTIVATE: {
       return {
-        ...nullUser,
-      };
+        ...state,
+        activated: true
+      }
     }
     default: {
       return state;

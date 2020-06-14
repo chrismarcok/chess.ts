@@ -49,7 +49,10 @@ export function sendVerificationEmail(user: IUser, callback: (success: boolean) 
     from: '"Marcok Board Game" <csc301hms@gmail.com>',
     to: `${user.email}`,
     subject: "Marcok Board Game Verification Email",
-    text: `Hello ${user.username},\n\nPleases click the following link to complete account verification: \n\n${process.env.BASE_URL}/api/verify/${user.id}\n\n Marcok Board Game`,
+    text: `Hello ${user.username},\n\nPlease follow the following steps:\n\n` + 
+    `1. Log in using the user and password you made.\n\n` + 
+    `2. Click the following link to complete account activation:\n\n` + 
+    `${process.env.BASE_URL}/activate/${user.id}\n\n Marcok Board Game`,
   };
 
   transporter.sendMail(mailOptions, (err: Error, data: any) => {

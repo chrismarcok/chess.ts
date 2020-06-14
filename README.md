@@ -25,6 +25,7 @@ SECRET=???
 MONGO_URI=???
 BASE_URL=http://localhost:3000
 EMAIL_PASSWORD=???
+ADMIN_KEY=???
 ```
 
 # Server

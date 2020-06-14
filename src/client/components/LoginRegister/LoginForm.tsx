@@ -1,18 +1,26 @@
-import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React from "react";
+import { useDispatch } from "react-redux";
 import Axios, { AxiosResponse } from "axios";
-import { userLogout, ReduxState, IAction, userLogin } from "../../actions/types";
+import { userLogin } from "../../actions/types";
 import { ReactUser } from "../../../server/models/User";
 import Toast from "../../../utils/toasts";
+import { useHistory } from "react-router";
 
-interface LoginFormProps {}
+interface LoginFormProps {
+  usernameValue: string;
+  passwordValue: string;
+  setUsernameValue: React.Dispatch<React.SetStateAction<string>>;
+  setPasswordValue: React.Dispatch<React.SetStateAction<string>>;
+}
 
-export const LoginForm: React.FC<LoginFormProps> = ({}) => {
-  const [usernameValue, setUsernameValue] = useState("");
-  const [passwordValue, setPasswordValue] = useState("");
-
-  const user = useSelector((state: ReduxState) => state.user);
+export const LoginForm: React.FC<LoginFormProps> = ({
+  usernameValue,
+  passwordValue,
+  setUsernameValue,
+  setPasswordValue,
+}) => {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const clearFields = () => {
     setUsernameValue("");
@@ -33,13 +41,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({}) => {
         dispatch(userLogin(user));
         clearFields();
         if (user.activated) {
-          Toast.success("You have successfully logged in.")
+          Toast.success("You have successfully logged in.");
         } else {
           Toast.warning("Please check your email to activiate your account.");
         }
+        history.push("/");
       })
       .catch((err: Error) => {
-        Toast.error("Could not log you in.")
+        Toast.error("Could not log you in.");
         console.log(err.message);
       });
   };

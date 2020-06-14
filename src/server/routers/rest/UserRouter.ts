@@ -2,7 +2,7 @@ import * as express from "express";
 import * as bcrypt from "bcryptjs";
 import User, { IUser } from "../../models/User";
 import { getRandomString, sendVerificationEmail, createNewUser } from "../../../utils/utils";
-import { checkAuthenticated, checkAuthenticated403 } from "../../auth/checkAuth";
+import { checkAuthenticated, checkAuthenticated403, checkAdmin } from "../../auth/checkAuth";
 
 const router = express.Router();
 
@@ -20,7 +20,7 @@ router.get(`/me`, checkAuthenticated403, (req, res) => {
  * @QueryParam username: Find the user with this username.
  * @QueryParam email: Find the user with this email.
  */
-router.get(`/users`, (req, res, next) => {
+router.get(`/users`, checkAdmin, (req, res, next) => {
   const qp = {
     username: req.query.username,
     email: req.query.email,
@@ -137,6 +137,50 @@ router.post(`/users`, (req, res) => {
         message: err.message,
       });
     });
+});
+
+router.put(`/users/:id/activate`, (req, res) => {
+  const id:string = req.params.id;
+
+  User.findById(id)
+  .then(user => {
+    if (user && !user.activated){
+      user.activated = true;
+      user.save();
+      res.sendStatus(204);
+    } else {
+      throw new Error(`Error 10004: Could not find user ${id}, or user is already activated.`);
+    }
+  })
+  .catch((err:Error) => {
+      console.log(err);
+      res.status(400).send({
+          message: err.message,
+          status: 400,
+      });
+  });
+});
+
+router.delete(`/users/:id`, checkAdmin, (req, res) => {
+  const id:string = req.params.id;
+
+  User.findById(id)
+  .then(user => {
+    if (user && !user.deleted){
+      user.deleted = true;
+      user.save();
+      res.sendStatus(204);
+    } else {
+      throw new Error(`Error 10005: Could not find user ${id}, or user is already deleted.`);
+    }
+  })
+  .catch((err:Error) => {
+      console.log(err);
+      res.status(400).send({
+        message: err.message,
+        status: 400,
+      });
+  });
 });
 
 export default router;

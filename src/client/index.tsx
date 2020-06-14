@@ -3,21 +3,27 @@ import { Provider } from "react-redux";
 import { render } from "react-dom";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { NoMatch } from "./pages/NoMatch";
-import { HomePage } from "./pages/HomePage";
+import { LoginPage } from "./pages/LoginPage";
+import { App } from "./pages/App";
 import "./scss/app";
 import { Room } from "./pages/Room";
 import store from "./store";
 import "!style-loader!css-loader!react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { VerifyLoginWrapper } from "./components/utils/VerifyLoginWrapper";
+import { Header } from "./components/common/Header";
+import { ActivatePage } from "./pages/ActivatePage";
 
 render(
   <Provider store={store}>
     <VerifyLoginWrapper>
       <ToastContainer position="top-right" />
       <BrowserRouter>
+        <Header/>
         <Switch>
-          <Route exact path="/" component={HomePage} />
+          <Route exact path="/" component={App} />
+          <Route exact path="/login" component={LoginPage} />
+          <Route exact path="/activate/:userId" component={ActivatePage} />
           <Route exact path="/rooms/:roomId" component={Room} />
           <Route component={NoMatch} />
         </Switch>
