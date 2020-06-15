@@ -65,3 +65,12 @@ export function sendVerificationEmail(user: IUser, callback: (success: boolean) 
     }
   });
 }
+
+/**
+ * Check to see if the id passed in is a valid mongo _id. (24 chars, hex)
+ * @param id the id passed in.
+ */
+export function checkHexSanity(id:string){
+  const re = /[0-9a-f]{24}/g;
+  return re.test(id);
+}

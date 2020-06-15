@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import { ReduxState, userActivate } from "../actions/types";
+import { ReduxState } from "../actions/types";
+import { userActivate } from "../actions/userActions"
 import { useSelector, useDispatch } from "react-redux";
 import Axios, { AxiosError } from "axios";
 import toast from "../../utils/toasts";

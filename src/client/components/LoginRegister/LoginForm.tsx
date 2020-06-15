@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import Axios, { AxiosResponse } from "axios";
-import { userLogin } from "../../actions/types";
+import { userLogin } from "../../actions/userActions";
 import { ReactUser } from "../../../server/models/User";
 import Toast from "../../../utils/toasts";
 import { useHistory } from "react-router";
@@ -36,7 +36,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
     Axios.post("/login", userInfo)
       .then((response: AxiosResponse<ReactUser>) => {
-        console.log(response);
         const user: ReactUser = response.data;
         dispatch(userLogin(user));
         clearFields();

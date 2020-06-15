@@ -8,13 +8,26 @@ const RoomSchema: Schema = new Schema({
   players: { type: [UserSchema], required: true },
   decklist: { type: [DeckSchema], required: true },
   expireAt: { type: Date, default: Date.now, index: { expires: '60m' }},
+  started: {type: Boolean, required: true},
+  ended: {type: Boolean, required: true},
 });
 
 export interface IRoom extends Document{
   _id: string;
   host: ReactUser;
-  players: [ReactUser];
-  decklist: [IDeck];
+  players: ReactUser[];
+  decklist: IDeck[];
+  started: boolean;
+  ended: boolean;
+}
+
+export interface ReactRoom {
+  _id: string;
+  host: ReactUser;
+  players: ReactUser[];
+  decklist: IDeck[];
+  started: boolean;
+  ended: boolean;
 }
 
 export default model<IRoom>('rooms', RoomSchema);

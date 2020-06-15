@@ -69,7 +69,7 @@ const defaultRouter = express.Router();
 defaultRouter.get("/connections", (req, res) => {
   res.send(connections);
 });
-defaultRouter.get("/activate/*", checkAuthenticated, (req, res) => {
+defaultRouter.get(["/activate/*", "/rooms/*"], checkAuthenticated, (req, res) => {
   res.sendFile(path.resolve(__dirname + "/../", 'public', 'index.html'));
 });
 defaultRouter.get("*", (req, res) => {

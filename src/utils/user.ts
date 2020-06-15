@@ -1,7 +1,8 @@
 import Axios, { AxiosResponse } from "axios";
 import { ReactUser } from "../server/models/User";
 import { LOCAL_STORAGE_USER } from "../client/actions/constants";
-import { userLogin, userLogout, IAction } from "../client/actions/types";
+import { userLogin, userLogout } from "../client/actions/userActions";
+import { IAction } from "../client/actions/types";
 import _ from "lodash";
 
 /**

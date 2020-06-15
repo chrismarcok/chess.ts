@@ -6,7 +6,7 @@ import { NoMatch } from "./pages/NoMatch";
 import { LoginPage } from "./pages/LoginPage";
 import { App } from "./pages/App";
 import "./scss/app";
-import { Room } from "./pages/Room";
+import { RoomPage } from "./pages/RoomPage";
 import store from "./store";
 import "!style-loader!css-loader!react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
@@ -24,7 +24,7 @@ render(
           <Route exact path="/" component={App} />
           <Route exact path="/login" component={LoginPage} />
           <Route exact path="/activate/:userId" component={ActivatePage} />
-          <Route exact path="/rooms/:roomId" component={Room} />
+          <Route exact path="/rooms/:roomId" component={RoomPage} />
           <Route component={NoMatch} />
         </Switch>
       </BrowserRouter>

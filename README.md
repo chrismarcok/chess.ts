@@ -1,3 +1,7 @@
+# About
+
+This is an adaptation of a physical board game that can be played with others through the browser. This project was built using the MERN stack, in TypeScript, and deployed on Heroku.
+
 # Game Info & Rules
 
 View [game.md](game.md).
@@ -5,6 +9,7 @@ View [game.md](game.md).
 # Getting Started
 
 ```bash
+git clone https://github.com/chrismarcok/boardgame.git
 cd boardgame
 npm install
 touch .env
