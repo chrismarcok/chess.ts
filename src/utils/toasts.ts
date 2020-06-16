@@ -2,9 +2,9 @@ import { toast } from "react-toastify";
 import { css } from "glamor";
 
 export default {
-  success: (message: string) => {
-    toast.success(message, {
-      autoClose: 2000,
+  success: (message: string, duration?: number) => {
+    toast.success(`✔️ ${message}`, {
+      autoClose: duration ? duration : 2000,
       closeButton: false,
       className: String(
         css({
@@ -14,9 +14,9 @@ export default {
       ),
     });
   },
-  warning: (message: string) => {
-    toast.warning(message, {
-      autoClose: 2000,
+  warning: (message: string, duration?: number) => {
+    toast.warning(`⚠️ ${message}`, {
+      autoClose: duration ? duration : 2000,
       closeButton: false,
       className: String(css({
         background: "#FFFFD1 !important",
@@ -24,9 +24,9 @@ export default {
       }))
     });
   },
-  error: (message: string) => {
-    toast.error(message, {
-      autoClose: 5000,
+  error: (message: string, duration?: number) => {
+    toast.error(`❌ ${message}`, {
+      autoClose: duration ? duration : 5000,
       closeButton: false,
       className: String(css({
         background: "#FFBEBC !important",

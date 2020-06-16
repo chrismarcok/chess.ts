@@ -7,7 +7,7 @@ const RoomSchema: Schema = new Schema({
   host: { type: UserSchema, required: true },
   players: { type: [UserSchema], required: true },
   decklist: { type: [DeckSchema], required: true },
-  expireAt: { type: Date, default: Date.now, index: { expires: '60m' }},
+  expireAt: { type: Date, default: Date.now, expires: 3600 },
   started: {type: Boolean, required: true},
   ended: {type: Boolean, required: true},
 });

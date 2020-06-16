@@ -3,6 +3,8 @@ import { checkAuthenticated403, checkAdmin } from "../../auth/checkAuth";
 import Room, {IRoom} from "../../models/Room";
 import {ReactUser, IUser} from "../../models/User";
 import { checkHexSanity } from "../../../utils/utils";
+import { Mongoose, Types } from "mongoose";
+import { RED } from "../../../utils/colors";
 
 const router = express.Router();
 
@@ -20,6 +22,27 @@ router.get("/rooms", checkAdmin, (req, res) => {
           message: err.message,
           status: 400,
       });
+  });
+});
+
+/**
+ * Find room hosted by this user.
+ */
+router.get("/rooms/mine", checkAuthenticated403, (req, res) => {
+  Room.findOne({'host.username': (<IUser>req.user).username})
+  .then(room => {
+    if (room){
+      res.status(200).send(room);
+    } else {
+      throw new Error("Error 11005: This user does not have a room.");
+    }
+  })
+  .catch((err:Error) => {
+      console.log(err);
+      res.status(400).send({
+        message: err.message,
+        status: 400,
+      })
   });
 });
 
@@ -59,11 +82,11 @@ router.get("/rooms/:id", checkAuthenticated403, (req, res) => {
  * Create a new room.
  */
 router.post("/rooms", checkAuthenticated403, (req, res) => {
-  const user:ReactUser = <ReactUser>req.body.user;
-  const iUser:any = Object.assign(user, {password: "NULL_PASSWORD"});
+  console.log(req.user);
+  const user:IUser = <IUser>req.user;
   const room = new Room({
-    host:iUser,
-    players:[iUser],
+    host:user,
+    players:[user],
     decklist:[],
     started: false,
     ended: false,
