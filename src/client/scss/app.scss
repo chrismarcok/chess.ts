@@ -70,6 +70,12 @@ textarea {
     overflow-y: scroll;
   }
 
+  .notice-container {
+    text-align: center;
+    width: 395px;
+    color: #666;
+  }
+
   .message-container{
     display: grid;
     grid-template-columns: 50px auto;
@@ -83,7 +89,7 @@ textarea {
 
     .message-content {
       overflow-wrap: break-word;
-      max-width: 395px;
+      max-width: 345px;
     }
   }
 
@@ -106,10 +112,13 @@ textarea {
   cursor: pointer;
 }
 
+.app-container {
+  padding: 10px;
+}
+
 .button-simple {
   padding: 10px;
   background-color: lightblue;
   display: inline-block;
-  margin: 10px;
   cursor: pointer;
 }

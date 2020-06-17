@@ -34,7 +34,7 @@ router.get("/rooms/mine", checkAuthenticated403, (req, res) => {
     if (room){
       res.status(200).send(room);
     } else {
-      throw new Error("Error 11005: This user does not have a room.");
+      throw new Error("INFO 11005: This user does not have a room.");
     }
   })
   .catch((err:Error) => {
@@ -92,9 +92,8 @@ router.post("/rooms", checkAuthenticated403, (req, res) => {
     ended: false,
   });
   room.save()
-  .then((obj) => {
-    console.log(obj);
-    res.sendStatus(201);
+  .then((r) => {
+    res.status(200).send(r);
   })
   .catch((err:Error) => {
     console.log(err);  

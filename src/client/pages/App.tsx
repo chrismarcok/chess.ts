@@ -19,7 +19,6 @@ export const App: React.FC<AppProps> = ({}) => {
     fetch("api/rooms/mine")
     .then(async response => {
       if (response.status === 400) {
-        console.log('%cLOOK HERE','color:red;font-family:system-ui;font-size:4rem;-webkit-text-stroke: 1px black;font-weight:bold');
         return Axios.post("/api/rooms");
       } else {
         const data = await response.json()
@@ -27,6 +26,7 @@ export const App: React.FC<AppProps> = ({}) => {
       }
     })
     .then((response: AxiosResponse<ReactRoom>) => {
+      console.log(response);
       if (response.status === 200){
         const room = response.data;
         dispatch(roomCreate(room));
@@ -44,7 +44,7 @@ export const App: React.FC<AppProps> = ({}) => {
   }
 
   return (
-    <>
+    <div>
       {!user._id && (
         <div onClick={() => history.push("/login")} className="button-simple">Click here to log in.</div>
       )}
@@ -52,6 +52,6 @@ export const App: React.FC<AppProps> = ({}) => {
         <div onClick={startGame} className="button-simple">Click here start a game.</div>
       )}
       {room._id && <div onClick={() => history.push(`/rooms/${room._id}`)} className="button-simple">Reconnect to room.</div>}
-    </>
+    </div>
   );
 };
