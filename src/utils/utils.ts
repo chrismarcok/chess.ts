@@ -2,13 +2,6 @@ import * as nodemailer from "nodemailer";
 import { GREEN, RED } from "./colors";
 import User, { IUser } from "../server/models/User";
 
-/**
- * Format the date as follows: 05:04:34 PM
- * @param date the date to format.
- */
-export function getCurrentTimeAsString(){
-  return "shit"
-}
 
 /**
  * Create a random alphanumeric string of length 10.

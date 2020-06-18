@@ -103,4 +103,31 @@ router.post("/rooms", checkAuthenticated403, (req, res) => {
   });
 });
 
+/**
+ * Start a game.
+ */
+router.post("/rooms/:id/start", checkAuthenticated403, (req, res) => {
+  const user:IUser = <IUser>req.user;
+  const id:string = req.params.id;
+  Room.findById(id)
+  .then(room => {
+    if (room && String(room.host._id) === String(user._id)){
+      return Room.updateOne({_id: id},
+        {started: true, decklist: req.body})
+    } else {
+      throw new Error(`Error 11020: No room with id ${id}`);
+    }
+  })
+  .then(() => {
+    res.sendStatus(200);
+  })
+  .catch((err:Error) => {
+      console.log(err.message);
+      res.status(400).send({
+        status: 400,
+        message: err.message,
+      })
+  });
+});
+
 export default router;

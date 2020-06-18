@@ -6,6 +6,7 @@ import { ReactRoom } from "../../../server/models/Room";
 import { SYSTEM_AVATAR } from "../../actions/constants";
 import Toast from "../../../utils/toasts";
 import Axios, { AxiosResponse } from "axios";
+import { ReactDeck } from "../../../server/models/Deck";
 
 interface PregameLobbyProps {
   socket: SocketIOClient.Socket;
@@ -72,6 +73,18 @@ export const PregameLobby: React.FC<PregameLobbyProps> = ({ socket, room, user }
 
   const [msgs, setMsgs] = useState<MessageCompWithMessage[]>([initialMessage]);
   const [players, setPlayers] = useState<string[]>([user.username]);
+  const [allDecks, setAllDecks] = useState<ReactDeck[]>([]);
+
+  useEffect(() => {
+    Axios.get("/api/decks")
+    .then( (response: AxiosResponse<ReactDeck[]>) => {
+      setAllDecks(response.data);
+    })
+    .catch((err: Error) => {
+        console.log(err.message);
+        Toast.error(err.message);
+    });
+  }, [])
 
   const addMessage = (message: MessageCompWithMessage) => {
     setMsgs(prevArray => [...prevArray, message]);
@@ -206,8 +219,19 @@ export const PregameLobby: React.FC<PregameLobbyProps> = ({ socket, room, user }
           </div>
         </div>
       </div>
+      <h3>Deck Selection</h3>
+      {
+        allDecks.map((deck, index) => {
+          return (
+            <>
+            <input type="checkbox"/><span key={index}>{deck.title}</span>
+            </>
+          )
+        })
+      }
       {document.queryCommandSupported("copy") && (
-        <>
+        <div>
+
           <CopyToClipboard
             text={String(window.location.href)}
             onCopy={() => {
@@ -216,15 +240,22 @@ export const PregameLobby: React.FC<PregameLobbyProps> = ({ socket, room, user }
           >
             <div className="button-simple">Copy invite link</div>
           </CopyToClipboard>
-        </>
+        </div>
       )}
       { copied && <p style={{ color: "red" }}>Copied.</p> }
       { user._id === room.host._id &&
       <>
         <br/>
         <div className="button-simple" onClick={() => {
-          socket.emit("start-game", room);
-          startGame();
+          Axios.post(`/api/rooms/${room._id}/start`, allDecks)
+            .then(() => {
+              startGame();
+              socket.emit("start-game", room);
+            })
+            .catch((err: Error) => {
+                console.log(err.message);
+                Toast.error(err.message)
+            });
         }}>Start game</div>
       </> }
     </>
