@@ -82,11 +82,10 @@ router.get("/rooms/:id", checkAuthenticated403, (req, res) => {
  * Create a new room.
  */
 router.post("/rooms", checkAuthenticated403, (req, res) => {
-  console.log(req.user);
   const user:IUser = <IUser>req.user;
   const room = new Room({
     host:user,
-    players:[user],
+    players:[],
     decklist:[],
     started: false,
     ended: false,

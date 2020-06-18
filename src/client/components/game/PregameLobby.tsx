@@ -3,6 +3,9 @@ import CopyToClipboard from "react-copy-to-clipboard";
 import { ReactUser } from "../../../server/models/User";
 import { Message } from "../../../utils/types";
 import { ReactRoom } from "../../../server/models/Room";
+import { SYSTEM_AVATAR } from "../../actions/constants";
+import Toast from "../../../utils/toasts";
+import Axios, { AxiosResponse } from "axios";
 
 interface PregameLobbyProps {
   socket: SocketIOClient.Socket;
@@ -31,8 +34,8 @@ interface MessageCompWithMessage {
   Comp: MessageComp;
 }
 
-const getCurrentTimeAsString = () => {
-  return (new Date()).toLocaleString("en-US").split(", ")[1];
+const timeToString = (date: Date) => {
+  return date.toLocaleString("en-US").split(", ")[1];
 }
 
 const ChatMessageComp: ChatMessageComp = ({ message }) => {
@@ -43,14 +46,14 @@ const ChatMessageComp: ChatMessageComp = ({ message }) => {
         className="avatar"
       />
       <div className="message-content">
-        <strong>{message.username}</strong> <span style={{color: "#666"}}>{getCurrentTimeAsString()}</span>: {message.content}
+        <strong>{message.username}</strong> <span style={{color: "#666"}}>{timeToString(message.time)}</span>: {message.content}
       </div>
     </div>
   );
 };
 
 const NoticeComp: NoticeComp = ({ message }) => {
-  return <div className="notice-container">{message.content}</div>;
+return <div className="notice-container">{message.content} - {timeToString(message.time)}</div>;
 };
 
 export const PregameLobby: React.FC<PregameLobbyProps> = ({ socket, room, user }) => {
@@ -61,8 +64,9 @@ export const PregameLobby: React.FC<PregameLobbyProps> = ({ socket, room, user }
     Comp: NoticeComp,
     message: {
       avatar: user.avatarURL,
-      content: `You have connected - ${getCurrentTimeAsString()}`,
+      content: `You have connected`,
       username: user.username,
+      time: new Date(),
     }
   }
 
@@ -71,6 +75,12 @@ export const PregameLobby: React.FC<PregameLobbyProps> = ({ socket, room, user }
 
   const addMessage = (message: MessageCompWithMessage) => {
     setMsgs(prevArray => [...prevArray, message]);
+    setTimeout(() => {
+      const chat = document.querySelector(".chat-content");
+      if (chat){
+        chat.scrollTop = chat.scrollHeight;
+      }
+    }, 100);
   };
 
   const addPlayer = (username: string) => {
@@ -81,14 +91,35 @@ export const PregameLobby: React.FC<PregameLobbyProps> = ({ socket, room, user }
     setPlayers(prevPlayers => prevPlayers.filter(player => player !== username));
   }
 
+  const startGame = () => {
+    let x = 5;
+    const i = setInterval(() => {
+      const m: MessageCompWithMessage = {
+        Comp: NoticeComp,
+        message: {
+          avatar: SYSTEM_AVATAR,
+          content: `Game will start in ${x}...`,
+          time: new Date(),
+          username: "SYSTEM",
+        }
+      }
+      addMessage(m);
+      if (--x === 0){
+        window.clearInterval(i);
+        Toast.success("Test");
+      }
+    }, 1000);
+  }
+
   useEffect(() => {
     socket.on("user-joined", (user: ReactUser) => {
       addMessage({
         Comp: NoticeComp,
         message: {
-          content: `${user.username} has connected - ${getCurrentTimeAsString()}`,
+          content: `${user.username} has connected`,
           username: user.username,
           avatar: user.avatarURL,
+          time: new Date(),
         },
       });
 
@@ -101,7 +132,8 @@ export const PregameLobby: React.FC<PregameLobbyProps> = ({ socket, room, user }
         message: {
           username: user.username,
           avatar: user.avatarURL,
-          content: `${user.username} has disconnected - ${getCurrentTimeAsString()}`,
+          content: `${user.username} has disconnected`,
+          time: new Date(),
         }
       });
 
@@ -116,7 +148,24 @@ export const PregameLobby: React.FC<PregameLobbyProps> = ({ socket, room, user }
       })
     });
 
+    socket.on("start-game", () => startGame());
+
   }, []);
+
+  useEffect(() => {
+    Axios.get(`/api/rooms/${room._id}`)
+    .then((response: AxiosResponse<ReactRoom>) => {
+      const result:string[] = [];
+      response.data.players.forEach(p => {
+        result.push(p.username);
+      });
+      setPlayers(result);
+    })
+    .catch((err: Error) => {
+        console.log(err.message);
+        Toast.error("Error 45233: Could not fetch player list.");
+    });
+  }, [])
 
   return (
     <>
@@ -143,6 +192,7 @@ export const PregameLobby: React.FC<PregameLobbyProps> = ({ socket, room, user }
                     avatar: user.avatarURL,
                     content: chatInput,
                     username: user.username,
+                    time: new Date(),
                   }
                   addMessage({
                     Comp: ChatMessageComp,
@@ -168,7 +218,15 @@ export const PregameLobby: React.FC<PregameLobbyProps> = ({ socket, room, user }
           </CopyToClipboard>
         </>
       )}
-      {copied && <p style={{ color: "red" }}>Copied.</p>}
+      { copied && <p style={{ color: "red" }}>Copied.</p> }
+      { user._id === room.host._id &&
+      <>
+        <br/>
+        <div className="button-simple" onClick={() => {
+          socket.emit("start-game", room);
+          startGame();
+        }}>Start game</div>
+      </> }
     </>
   );
 };

@@ -10,3 +10,5 @@ export const ROOM_DESTROY = "ROOM_DESTROY";
 //Other
 export const LOCAL_STORAGE_USER = "__MARCOK_GAME_USER__";
 export const LOCAL_STORAGE_ROOM = "__MARCOK_GAME_ROOM__";
+
+export const SYSTEM_AVATAR = "https://iupac.org/wp-content/uploads/2018/05/default-avatar.png";

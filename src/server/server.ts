@@ -16,7 +16,7 @@ import LoginRouter from "./routers/LoginRouter";
 import { CYAN, RED, YELLOW, MAGENTA } from "../utils/colors";
 import { checkAuthenticated } from "./auth/checkAuth";
 import { ReactUser } from "./models/User";
-import { ReactRoom } from "./models/Room";
+import Room, { ReactRoom } from "./models/Room";
 import { Message } from "../utils/types";
 dotenv.config();
 
@@ -95,6 +95,16 @@ io.on("connection", (socket: socketio.Socket) => {
 
   socket.on("user-joined", (payload: {user: ReactUser, room: ReactRoom}) => {
     console.log(MAGENTA, `[SOCKET.IO] User ${payload.user.username} has connected to room ${payload.room._id}.`);
+
+    Room.updateOne({ _id: payload.room._id}, 
+    {$addToSet: {players: Object.assign(payload.user, {password: "NULL_PASSWORD"})}})
+    .then(() => {
+      console.log(MAGENTA, `[SOCKET.IO] User ${payload.user.username} has been added to room ${payload.room._id}.`);
+    })
+    .catch((err:any) => {
+        console.log(err);
+    });
+
     connections[socket.id] = payload;
     socket.to(payload.room._id).broadcast.emit("user-joined", payload.user);
   });
@@ -108,9 +118,23 @@ io.on("connection", (socket: socketio.Socket) => {
     socket.to(payload.room._id).broadcast.emit("send-message", payload.message);
   });
 
+  socket.on("start-game", (room: ReactRoom) => {
+    socket.to(room._id).broadcast.emit("start-game");
+  });
+
   socket.on("disconnect", () => {
     if (connections[socket.id] !== undefined){
-      console.log(MAGENTA, `[SOCKET.IO] ${connections[socket.id].user} disconnected.`);
+      const username: string = connections[socket.id].user.username;
+      Room.updateOne({ _id: currentRoomId}, 
+        {$pull: {players: {_id: connections[socket.id].user._id}}})
+        .then(() => {
+          console.log(MAGENTA, `[SOCKET.IO] User ${username} has been removed from room ${currentRoomId}.`);
+        })
+        .catch((err:any) => {
+            console.log(err);
+        });
+
+      console.log(MAGENTA, `[SOCKET.IO] ${username} disconnected.`);
       socket.to(currentRoomId).broadcast.emit("user-disconnected", connections[socket.id].user);
     }
     delete connections[socket.id];
