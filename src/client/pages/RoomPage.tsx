@@ -10,6 +10,7 @@ import { useHistory } from "react-router";
 import { ReactRoom } from "../../server/models/Room";
 import { roomCreate } from "../actions/roomActions";
 import { ReactUser } from "../../server/models/User";
+import { Game } from "../components/game/Game";
 
 const socket = io.connect();
 
@@ -55,6 +56,7 @@ export const RoomPage: React.FC<RoomPageProps> = ({}) => {
   return (
     <>
       {!room.started && room._id && user._id && <PregameLobby socket={socket} room={room} user={user} />}
+      {room.started && !room.ended && user._id && <Game socket={socket} room={room} user={user}/>}
       {room.ended && <div>This game has ended.</div>}
     </>
   );

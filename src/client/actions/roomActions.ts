@@ -12,6 +12,7 @@ export const roomCreate = (room: ReactRoom): IRoomAction => {
       decklist: room.decklist,
       started: room.started,
       ended: room.ended,
+      expireAt: room.expireAt,
     },
   }
 }

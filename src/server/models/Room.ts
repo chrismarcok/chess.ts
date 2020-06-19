@@ -19,6 +19,7 @@ export interface IRoom extends Document{
   decklist: IDeck[];
   started: boolean;
   ended: boolean;
+  expireAt: Date;
 }
 
 export interface ReactRoom {
@@ -28,6 +29,7 @@ export interface ReactRoom {
   decklist: IDeck[];
   started: boolean;
   ended: boolean;
+  expireAt: Date;
 }
 
 export default model<IRoom>('rooms', RoomSchema);

@@ -18,6 +18,7 @@ import { checkAuthenticated } from "./auth/checkAuth";
 import { ReactUser } from "./models/User";
 import Room, { ReactRoom } from "./models/Room";
 import { Message } from "../utils/types";
+import { ReactCard } from "./models/Card";
 dotenv.config();
 
 // SERVER INIT
@@ -30,6 +31,7 @@ const connections: {[key: string]: {user: ReactUser, room: ReactRoom}} = {};
 
 (<any>mongoose).Promise = global.Promise;
 mongoose.set("useCreateIndex", true);
+mongoose.set('useFindAndModify', false);
 mongoose
   .connect(process.env.MONGO_URI,
   {
@@ -119,8 +121,12 @@ io.on("connection", (socket: socketio.Socket) => {
   });
 
   socket.on("start-game", (room: ReactRoom) => {
-    socket.to(room._id).broadcast.emit("start-game");
+    socket.to(room._id).broadcast.emit("start-game", room);
   });
+
+  socket.on("card-clicked", (payload: {room: ReactRoom, card: ReactCard}) => {
+    socket.to(payload.room._id).broadcast.emit("card-clicked", payload.card);
+  })
 
   socket.on("disconnect", () => {
     if (connections[socket.id] !== undefined){

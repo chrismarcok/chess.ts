@@ -9,6 +9,7 @@ export const nullRoom: ReactRoom = {
   decklist: [],
   started: null,
   ended: null,
+  expireAt: null,
 };
 
 export default (state = nullRoom, action: IAction): ReactRoom => {

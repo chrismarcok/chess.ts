@@ -7,6 +7,8 @@ import { SYSTEM_AVATAR } from "../../actions/constants";
 import Toast from "../../../utils/toasts";
 import Axios, { AxiosResponse } from "axios";
 import { ReactDeck } from "../../../server/models/Deck";
+import { useDispatch } from "react-redux";
+import { roomCreate } from "../../actions/roomActions";
 
 interface PregameLobbyProps {
   socket: SocketIOClient.Socket;
@@ -37,7 +39,7 @@ interface MessageCompWithMessage {
 
 const timeToString = (date: Date) => {
   return date.toLocaleString("en-US").split(", ")[1];
-}
+};
 
 const ChatMessageComp: ChatMessageComp = ({ message }) => {
   return (
@@ -47,17 +49,27 @@ const ChatMessageComp: ChatMessageComp = ({ message }) => {
         className="avatar"
       />
       <div className="message-content">
-        <strong>{message.username}</strong> <span style={{color: "#666"}}>{timeToString(message.time)}</span>: {message.content}
+        <strong>{message.username}</strong>{" "}
+        <span style={{ color: "#666" }}>{timeToString(message.time)}</span>:{" "}
+        {message.content}
       </div>
     </div>
   );
 };
 
 const NoticeComp: NoticeComp = ({ message }) => {
-return <div className="notice-container">{message.content} - {timeToString(message.time)}</div>;
+  return (
+    <div className="notice-container">
+      {message.content} - {timeToString(message.time)}
+    </div>
+  );
 };
 
-export const PregameLobby: React.FC<PregameLobbyProps> = ({ socket, room, user }) => {
+export const PregameLobby: React.FC<PregameLobbyProps> = ({
+  socket,
+  room,
+  user,
+}) => {
   const [copied, setCopied] = useState(false);
   const [chatInput, setChatInput] = useState("");
 
@@ -68,43 +80,49 @@ export const PregameLobby: React.FC<PregameLobbyProps> = ({ socket, room, user }
       content: `You have connected`,
       username: user.username,
       time: new Date(),
-    }
-  }
+    },
+  };
 
   const [msgs, setMsgs] = useState<MessageCompWithMessage[]>([initialMessage]);
   const [players, setPlayers] = useState<string[]>([user.username]);
   const [allDecks, setAllDecks] = useState<ReactDeck[]>([]);
+  const selectedDeckInices = new Set<number>();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    Axios.get("/api/decks")
-    .then( (response: AxiosResponse<ReactDeck[]>) => {
-      setAllDecks(response.data);
-    })
-    .catch((err: Error) => {
+    setTimeout(() => {
+      Axios.get("/api/decks")
+      .then((response: AxiosResponse<ReactDeck[]>) => {
+        setAllDecks(response.data);
+      })
+      .catch((err: Error) => {
         console.log(err.message);
         Toast.error(err.message);
-    });
-  }, [])
+      });
+    }, 0);
+  }, []);
 
   const addMessage = (message: MessageCompWithMessage) => {
-    setMsgs(prevArray => [...prevArray, message]);
+    setMsgs((prevArray) => [...prevArray, message]);
     setTimeout(() => {
       const chat = document.querySelector(".chat-content");
-      if (chat){
+      if (chat) {
         chat.scrollTop = chat.scrollHeight;
       }
     }, 100);
   };
 
   const addPlayer = (username: string) => {
-    setPlayers(prevPlayers => [...prevPlayers, username]);
-  }
+    setPlayers((prevPlayers) => [...prevPlayers, username]);
+  };
 
   const removePlayer = (username: string) => {
-    setPlayers(prevPlayers => prevPlayers.filter(player => player !== username));
-  }
+    setPlayers((prevPlayers) =>
+      prevPlayers.filter((player) => player !== username)
+    );
+  };
 
-  const startGame = () => {
+  const startGame = (startedRoom: ReactRoom) => {
     let x = 5;
     const i = setInterval(() => {
       const m: MessageCompWithMessage = {
@@ -114,15 +132,15 @@ export const PregameLobby: React.FC<PregameLobbyProps> = ({ socket, room, user }
           content: `Game will start in ${x}...`,
           time: new Date(),
           username: "SYSTEM",
-        }
-      }
+        },
+      };
       addMessage(m);
-      if (--x === 0){
+      if (--x === 0) {
         window.clearInterval(i);
-        Toast.success("Test");
+        dispatch(roomCreate(startedRoom))
       }
     }, 1000);
-  }
+  };
 
   useEffect(() => {
     socket.on("user-joined", (user: ReactUser) => {
@@ -147,7 +165,7 @@ export const PregameLobby: React.FC<PregameLobbyProps> = ({ socket, room, user }
           avatar: user.avatarURL,
           content: `${user.username} has disconnected`,
           time: new Date(),
-        }
+        },
       });
 
       removePlayer(user.username);
@@ -158,27 +176,26 @@ export const PregameLobby: React.FC<PregameLobbyProps> = ({ socket, room, user }
       addMessage({
         Comp: ChatMessageComp,
         message: message,
-      })
+      });
     });
 
-    socket.on("start-game", () => startGame());
-
+    socket.on("start-game", (room: ReactRoom) => startGame(room));
   }, []);
 
   useEffect(() => {
     Axios.get(`/api/rooms/${room._id}`)
-    .then((response: AxiosResponse<ReactRoom>) => {
-      const result:string[] = [];
-      response.data.players.forEach(p => {
-        result.push(p.username);
-      });
-      setPlayers(result);
-    })
-    .catch((err: Error) => {
+      .then((response: AxiosResponse<ReactRoom>) => {
+        const result: string[] = [];
+        response.data.players.forEach((p) => {
+          result.push(p.username);
+        });
+        setPlayers(result);
+      })
+      .catch((err: Error) => {
         console.log(err.message);
         Toast.error("Error 45233: Could not fetch player list.");
-    });
-  }, [])
+      });
+  }, []);
 
   return (
     <>
@@ -206,12 +223,12 @@ export const PregameLobby: React.FC<PregameLobbyProps> = ({ socket, room, user }
                     content: chatInput,
                     username: user.username,
                     time: new Date(),
-                  }
+                  };
                   addMessage({
                     Comp: ChatMessageComp,
                     message: msg,
                   });
-                  socket.emit("send-message", {message: msg, room: room});
+                  socket.emit("send-message", { message: msg, room: room });
                   setChatInput("");
                 }
               }}
@@ -220,18 +237,27 @@ export const PregameLobby: React.FC<PregameLobbyProps> = ({ socket, room, user }
         </div>
       </div>
       <h3>Deck Selection</h3>
-      {
-        allDecks.map((deck, index) => {
-          return (
-            <>
-            <input type="checkbox"/><span key={index}>{deck.title}</span>
-            </>
-          )
-        })
-      }
+      {allDecks.map((deck, index) => {
+        return (
+          <div key={index}>
+            <input
+              type="checkbox"
+              className="mr-10px"
+              disabled={String(user._id) !== String(room.host._id)}
+              onChange={() => {
+                if (selectedDeckInices.has(index)) {
+                  selectedDeckInices.delete(index);
+                } else {
+                  selectedDeckInices.add(index);
+                }
+              }}
+            />
+            <span key={index}>{deck.title}</span>
+          </div>
+        );
+      })}
       {document.queryCommandSupported("copy") && (
         <div>
-
           <CopyToClipboard
             text={String(window.location.href)}
             onCopy={() => {
@@ -242,22 +268,37 @@ export const PregameLobby: React.FC<PregameLobbyProps> = ({ socket, room, user }
           </CopyToClipboard>
         </div>
       )}
-      { copied && <p style={{ color: "red" }}>Copied.</p> }
-      { user._id === room.host._id &&
-      <>
-        <br/>
-        <div className="button-simple" onClick={() => {
-          Axios.post(`/api/rooms/${room._id}/start`, allDecks)
-            .then(() => {
-              startGame();
-              socket.emit("start-game", room);
-            })
-            .catch((err: Error) => {
-                console.log(err.message);
-                Toast.error(err.message)
-            });
-        }}>Start game</div>
-      </> }
+      {copied && <p style={{ color: "red" }}>Copied.</p>}
+      {user._id === room.host._id && (
+        <>
+          <br />
+          <div
+            className="button-simple"
+            onClick={() => {
+              if (selectedDeckInices.size === 0) {
+                Toast.error("You must select at least one deck to start.");
+              } else {
+                Axios.post(
+                  `/api/rooms/${room._id}/start`,
+                  allDecks.filter((deck, index) =>
+                    selectedDeckInices.has(index)
+                  )
+                )
+                  .then((response: AxiosResponse<ReactRoom>) => {
+                    startGame(response.data);
+                    socket.emit("start-game", response.data);
+                  })
+                  .catch((err: Error) => {
+                    console.log(err.message);
+                    Toast.error(err.message);
+                  });
+              }
+            }}
+          >
+            Start game
+          </div>
+        </>
+      )}
     </>
   );
 };

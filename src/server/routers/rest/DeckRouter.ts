@@ -23,9 +23,7 @@ router.get("/decks", (req, res) => {
 });
 
 router.post("/decks", checkAuthenticated403, (req, res) => {
-  const deck = new Deck({
-    cards: req.body
-  });
+  const deck = new Deck(req.body);
 
   deck.save()
   .then((r) => {

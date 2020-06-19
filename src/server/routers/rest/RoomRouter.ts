@@ -112,14 +112,14 @@ router.post("/rooms/:id/start", checkAuthenticated403, (req, res) => {
   Room.findById(id)
   .then(room => {
     if (room && String(room.host._id) === String(user._id)){
-      return Room.updateOne({_id: id},
-        {started: true, decklist: req.body})
+      return Room.findByIdAndUpdate({_id: id},
+        {started: true, decklist: req.body}, {new: true})
     } else {
       throw new Error(`Error 11020: No room with id ${id}`);
     }
   })
-  .then(() => {
-    res.sendStatus(200);
+  .then((r) => {
+    res.status(200).send(r);
   })
   .catch((err:Error) => {
       console.log(err.message);

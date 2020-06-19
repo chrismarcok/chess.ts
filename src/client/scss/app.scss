@@ -12,6 +12,10 @@ $imported-font: 'Poppins', sans-serif;
   display: inline-block;
 }
 
+.mr-10px{
+  margin-right: 10px;
+}
+
 textarea {
   outline: none;
   padding: 5px;
@@ -108,6 +112,53 @@ textarea {
         height: 50px;
         width: 400px;
       }
+    }
+  }
+}
+
+.game {
+  .player-container{
+    height: 160px;
+
+    .info{
+      float: left;
+      background-color: #ccc;
+      height: 160px;
+      width: 300px;
+
+      .title{
+        font-size: 1.5rem;
+      }
+      .avatar{
+        width: 50px;
+        height: 50px;
+        background-size: contain;
+      }
+    }
+  }
+
+  .hand{
+    display: inline-block;
+
+    .weapon-cards{
+      float: left;
+    }
+    .clue-cards{
+      float: right;
+    }
+  }
+
+  .card-container{
+    background-color: #efefef;
+    display: inline-block;
+
+    .title{
+      font-size: 1rem;
+    }
+    .picture{
+      height: 100px;
+      width: 100px;
+      background-size: contain;
     }
   }
 }
