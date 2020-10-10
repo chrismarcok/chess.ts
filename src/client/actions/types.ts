@@ -1,9 +1,7 @@
-import { ReactUser } from "../../server/models/User";
-import { ReactRoom } from "../../server/models/Room";
+import { ReactUser } from "../../utils/types";
 
 export interface ReduxState {
   user: ReactUser;
-  room: ReactRoom;
 }
 
 export interface IAction {
@@ -13,8 +11,4 @@ export interface IAction {
 
 export interface IUserAction extends IAction {
   payload: ReactUser;
-}
-
-export interface IRoomAction extends IAction {
-  payload: ReactRoom;
 }

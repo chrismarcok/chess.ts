@@ -7,7 +7,7 @@ interface NoMatchProps {
 export const NoMatch: React.FC<NoMatchProps> = ({}) => {
     return (
       <div>
-        404
+        Error 404 - The resource you have requested could not be found.
       </div>
     );
 }

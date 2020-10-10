@@ -17,22 +17,6 @@ export const Header: React.FC<HeaderProps> = ({}) => {
         <li onClick={() => go("/")} className="clickable">
           Home
         </li>
-        {!user._id && (
-          <li onClick={() => go("/login")} className="clickable">
-            Login
-          </li>
-        )}
-        {user._id && (
-          <li onClick={() => go("/logout")} className="clickable">
-            Logout
-          </li>
-        )}
-        {user._id && (
-          <li onClick={() => go("/api/me")} className="clickable">
-            Currently Logged in as: <span className="avatar" style={{backgroundImage: `url(${user.avatarURL})`}}></span>
-            {user.username}
-          </li>
-        )}
       </ul>
     </div>
   );
